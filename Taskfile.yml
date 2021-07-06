@@ -1,0 +1,29 @@
+version: '3'
+
+env:
+  COV_DIR: cov_profile
+  LCOV_FILE: cov_profile.lcov
+
+tasks:
+  fmt: deno fmt .
+
+  lint: deno lint --unstable .
+
+  test: deno test ./mod_test.ts
+
+  cover:
+    deps: [rm-cov]
+    cmds:
+      - deno test --coverage=$COV_DIR --unstable ./mod_test.ts
+
+  cover-pretty:
+    deps: [cover]
+    cmds:
+      - deno coverage --unstable $COV_DIR
+
+  cover-lcov:
+    deps: [cover]
+    cmds:
+      - deno coverage --unstable $COV_DIR --lcov > $LCOV_FILE
+
+  rm-cov: rm -rf $COV_DIR
